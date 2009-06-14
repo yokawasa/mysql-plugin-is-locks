@@ -1,0 +1,108 @@
+/*
+ * README
+ * mysql-plugin-is-locks - MySQL Information Schema plugin
+ * that provide information about tables locks
+ */
+
+====================================================================
+* Introduction
+====================================================================
+
+This is MySQL Information Schema plugin that provide information about
+table locks.
+
+* MySQL plugin API
+http://dev.mysql.com/doc/refman/5.1/en/plugin-api.html
+
+
+====================================================================
+* Build and Install
+====================================================================
+
+1) extract files from an archive
+tar zxvf mysql-plugin-is-locks-VERSION.tar.gz
+cd mysql-plugin-is-locks-VERSION
+
+2) configure, make, amd make install
+./configure --with-mysql-config=/__path__/mysql_config --with-mysql-src=/__path-to-src__
+make
+sudo make install
+
+3) login to mysql, and install plugin
+mysql -uroot -p
+mysql>INSTALL PLUGIN TABLE_LOCKS SONAME 'is_locks.so';
+
+====================================================================
+* Test
+====================================================================
+
+1) login to mysql
+mysql -uroot -p
+
+2) issue select query for information_schema.TABLE_LOCKS table
+mysql> use information_schema;
+mysql> show tables;
+
++---------------------------------------+
+| Tables_in_information_schema          |
++---------------------------------------+
+| CHARACTER_SETS                        |
+| COLLATIONS                            |
+| COLLATION_CHARACTER_SET_APPLICABILITY |
+| COLUMNS                               |
+| COLUMN_PRIVILEGES                     |
+| ENGINES                               |
+| EVENTS                                |
+| FILES                                 |
+| GLOBAL_STATUS                         |
+| GLOBAL_VARIABLES                      |
+| KEY_COLUMN_USAGE                      |
+| PARTITIONS                            |
+| PLUGINS                               |
+| PROCESSLIST                           |
+| PROFILING                             |
+| REFERENTIAL_CONSTRAINTS               |
+| ROUTINES                              |
+| SCHEMATA                              |
+| SCHEMA_PRIVILEGES                     |
+| SESSION_STATUS                        |
+| SESSION_VARIABLES                     |
+| STATISTICS                            |
+| TABLES                                |
+| TABLE_CONSTRAINTS                     |
+| TABLE_PRIVILEGES                      |
+| TRIGGERS                              |
+| USER_PRIVILEGES                       |
+| VIEWS                                 |
+| TABLE_LOCKS                           |
++---------------------------------------+
+29 rows in set (0.00 sec)
+
+
+mysql> select * from TABLE_LOCKS;
+root@localhost[information_schema]> select * from TABLE_LOCKS;
++-----------+----------+-------+--------+---------+-------+--------------------------------------+-----------------------------------------------------------+
+| Thread_id | Database | Table | Locked | Waiting | Type  | Desription                           | Query                                                     |
++-----------+----------+-------+--------+---------+-------+--------------------------------------+-----------------------------------------------------------+
+|        43 | test     | t1    |      0 |       1 | write | Lock Used by delayed insert          | INSERT INTO test.t1 ( id, body ) VALUES ( 20000, 'aaaa' ) |
+|         2 | test     | t1    |      1 |       0 | read  | Write lock that allows other writers | select * from TABLE_LOCKS                                 |
+|        44 | test     | t1    |      0 |       1 | read  | Shared Read lock                     | select * from test.t1 order by body                       |
++-----------+----------+-------+--------+---------+-------+--------------------------------------+-----------------------------------------------------------+
+3 rows in set (0.00 sec)
+
+
+
+* About Output Fields
++-------------+--------------------------------------------------------+
+| FIELD NAME  |    DESCRIPTION                                         |
+|-------------+--------------------------------------------------------+
+| Thread_id   | thread ID if it's in use, otherwise 0                  |
+| Database    | the name of database                                   |
+| Table       | the name of table                                      |
+| Locked      | 1 if it's locking thread, 0 if not                     |
+| Waiting     | 1 if it's waiting thread, 0 if not                     |
+| Type        | write or read                                          |
+| Description | lock description if it's in use                        |
+| Query       | issued query info if in use                            |
++-------------+--------------------------------------------------------+
+
