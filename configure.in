@@ -1,21 +1,24 @@
-dnl For is_test plugin
-AC_INIT(is_locks, 1.0)
-AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER(config.h)
-AC_DISABLE_STATIC
+dnl For is_locks MySQL
+AC_INIT(src/is_locks.cc)
+AC_CONFIG_AUX_DIR(config)
+AM_CONFIG_HEADER(src/is_locks_config.h)
+AM_INIT_AUTOMAKE("is_locks", 0.1)
+
 AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CPP
+AC_PROG_GCC_TRADITIONAL
 AC_PROG_LIBTOOL
+LIBTOOL="$LIBTOOL --preserve-dup-deps"
+AC_SUBST(LIBTOOL)dnl
 
 sinclude(config/ac_mysql.m4)
-MYSQL_CONFIG_TEST
-AC_SUBST(MYSQL_INCLUDES)
-AC_SUBST(MYSQL_PLUGINDIR)
+
 MYSQL_SRC_TEST
-AC_SUBST(MYSQL_SRC_INCLUDES)
+AC_SUBST(MYSQL_INC)
+CXXFLAGS="$CXXFLAGS -fno-implicit-templates -fno-exceptions -fno-rtti"
 
 AC_C_CONST
 AC_TYPE_SIZE_T
-dnl AC_CHECK_HEADERS(limits.h syslimits.h)
-AC_CONFIG_FILES([Makefile])
-AC_OUTPUT
-
+AC_CHECK_HEADERS(limits.h syslimits.h)
+AC_OUTPUT(Makefile src/Makefile)

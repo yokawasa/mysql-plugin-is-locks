@@ -24,9 +24,22 @@ tar zxvf mysql-plugin-is-locks-VERSION.tar.gz
 cd mysql-plugin-is-locks-VERSION
 
 2) configure, make, amd make install
-./configure --with-mysql-config=/__path__/mysql_config --with-mysql-src=/__path-to-src__
+./configure  --with-mysql=<mysql src directory> --libdir=<mysql plugin dir>
 make
 sudo make install
+
+(configure option)
+  --with-mysql (required) : set the directory of MySQL source code
+  --libdir     (optional) : set the plugin library directory of your MySQL.
+                            It is in most cases lib/mysql/plugin
+
+if you want to know your MySQL's plugin directory, use mysql_config's plugindir
+option. it tells you your MySQL's plugin directory.
+
+ex.
+$ /-path-to-/mysql/bin/mysql_config --plugindir
+/path-to/mysql/lib/mysql/plugin
+$ ./configure --with-mysql=/usr/local/src/mysql/mysql-5.1.30 --libdir=/home/mysql/lib/mysql/plugin
 
 3) login to mysql, and install plugin
 mysql -uroot -p
