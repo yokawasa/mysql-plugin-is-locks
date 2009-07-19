@@ -78,15 +78,15 @@ static int fill_rows_into_table ( THD *thd, TABLE * table, CHARSET_INFO *scs,
     if (entry && entry->s->tmp_table == NO_TMP_TABLE) {
         char table_name[FN_REFLEN];
         /* treahd id */
-        L_STORE_ROW_LONG(table, 0, (longlong) entry->in_use ? entry->in_use->thread_id : 0L );
+        L_STORE_ROW_LONG(table, 0, (long) entry->in_use ? entry->in_use->thread_id : 0L );
         /* database name */
         L_STORE_ROW_STRING(table, 1, entry->s->db.str, scs);
         /* table name */
         L_STORE_ROW_STRING(table, 2, entry->s->table_name.str, scs);
         /* Locked */
-        L_STORE_ROW_LONG(table, 3, (longlong) locked );
+        L_STORE_ROW_LONG(table, 3, (long) locked );
         /* Waiting */
-        L_STORE_ROW_LONG(table, 4, (longlong) waiting );
+        L_STORE_ROW_LONG(table, 4, (long) waiting );
         /* Type 0-read 1-write */
         L_STORE_ROW_STRING(table, 5, ( type==1 ) ? "write" : "read" , scs);
         /* Description */
